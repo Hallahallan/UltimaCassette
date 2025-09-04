@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Severance Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #FFF8DC; /* Pastel yellow background */
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 300;
+        }
+
+        /* Play Button */
+        .play-button {
+            width: 120px;
+            height: 120px;
+            background: #87CEEB; /* Light blue */
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem auto;
+            box-shadow: 0 8px 20px rgba(135, 206, 235, 0.3);
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(135, 206, 235, 0.4);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 25px solid white;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            margin-left: 8px;
+        }
+
+        /* Word Cloud */
+        .word-cloud {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .emotion-word {
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: lowercase;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .emotion-word:nth-child(odd) { background: #FFE4E1; } /* Pastel pink */
+        .emotion-word:nth-child(even) { background: #E0F6FF; } /* Pastel blue */
+        .emotion-word:nth-child(3n) { background: #F0FFF0; } /* Pastel green */
+        .emotion-word:nth-child(4n) { background: #FFF0F5; } /* Pastel lavender */
+        .emotion-word:nth-child(5n) { background: #F5FFFA; } /* Mint cream */
+
+        .emotion-word:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .emotion-word.selected {
+            border-color: #87CEEB;
+            background: #87CEEB !important;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Form */
+        .email-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #87CEEB;
+            box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            background: #87CEEB;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+            min-width: 120px;
+        }
+
+        .btn:hover {
+            background: #5DADE2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(135, 206, 235, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        /* Thank you screen */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: #ecf0f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #ecf0f1;
+            border-radius: 2px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #87CEEB;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .status-text {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .screen {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .word-cloud {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .play-button {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Screen 1: Play Button -->
+    <div id="screen-1" class="screen active">
+        <h1>Ultima Cassette</h1>
+        <button class="play-button" onclick="playRandomSong()">
+            <div class="play-icon"></div>
+        </button>
+        <p class="status-text">Press to begin your session</p>
+    </div>
+
+    <!-- Screen 2: Word Cloud -->
+    <div id="screen-2" class="screen">
+        <h2>How does this make you feel?</h2>
+        <div class="word-cloud" id="word-cloud">
+            <!-- Words will be generated by JavaScript -->
+        </div>
+        <button class="btn" onclick="proceedToEmail()" id="proceed-btn" disabled>Continue</button>
+    </div>
+
+    <!-- Screen 3: Email Form -->
+    <div id="screen-3" class="screen">
+        <h2>Complete Your Session</h2>
+        <form class="email-form" onsubmit="submitData(event)">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            <button type="submit" class="btn" id="submit-btn">Submit</button>
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+        </form>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p class="status-text" id="submit-status">Ready to submit</p>
+    </div>
+
+    <!-- Screen 4: Thank You -->
+    <div id="screen-4" class="screen">
+        <h2>Session Complete</h2>
+        <div class="logo-container">
+            <div class="logo">🎵</div>
+            <div class="logo">💭</div>
+            <div class="logo">✉️</div>
+        </div>
+        <p style="color: #2c3e50; font-size: 1.1rem; margin: 2rem 0;">
+            Thank you for participating in our experience.
+        </p>
+        <button class="btn" onclick="resetApp()">Start New Session</button>
+    </div>
+
+    <script>
+        // Configuration - Replace with your Google Apps Script Web App URL
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHk_HDmplJMlMtn1RLgJc9dkacmMOPGQQ3blMO91ldUVYpQYqD-Zf54cXeXC8cNsOl/exec';
+        
+        // Sample songs database (in real app, you'd have actual audio files)
+        const songs = [
+            'ambient_01.mp3', 'corporate_02.mp3', 'minimal_03.mp3', 'electronic_04.mp3',
+            'atmosphere_05.mp3', 'institutional_06.mp3', 'synth_07.mp3', 'digital_08.mp3',
+            'workspace_09.mp3', 'modern_10.mp3', 'clean_11.mp3', 'professional_12.mp3',
+            'focus_13.mp3', 'productivity_14.mp3', 'efficiency_15.mp3', 'corporate_flow_16.mp3'
+        ];
+
+        // Emotion words for the word cloud
+        const emotions = [
+            'calm', 'focused', 'energized', 'motivated', 'peaceful', 'inspired',
+            'confident', 'creative', 'determined', 'relaxed', 'optimistic', 'balanced',
+            'productive', 'clear', 'centered', 'refreshed', 'engaged', 'alert'
+        ];
+
+        // Application state
+        let currentSong = '';
+        let selectedEmotions = [];
+        let sessionId = '';
+
+        // Initialize the application
+        function initApp() {
+            sessionId = 'session_' + Date.now();
+            generateWordCloud();
+            console.log('Severance Experience initialized');
+        }
+
+        // Screen navigation
+        function showScreen(screenNumber) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(`screen-${screenNumber}`).classList.add('active');
+        }
+
+        // Screen 1: Play random song
+        function playRandomSong() {
+            const randomIndex = Math.floor(Math.random() * songs.length);
+            currentSong = songs[randomIndex];
+            
+            // In a real implementation, you would play the actual audio file
+            console.log('Playing:', currentSong);
+            
+            // Simulate playing audio for 3 seconds then move to next screen
+            updateProgress(0);
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                updateProgress(progress);
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => showScreen(2), 500);
+                }
+            }, 300);
+        }
+
+        function updateProgress(percentage) {
+            const progressBar = document.getElementById('progress-fill');
+            if (progressBar) {
+                progressBar.style.width = percentage + '%';
+            }
+        }
+
+        // Screen 2: Generate and handle word cloud
+        function generateWordCloud() {
+            const wordCloud = document.getElementById('word-cloud');
+            wordCloud.innerHTML = '';
+            
+            // Shuffle emotions for random placement
+            const shuffledEmotions = [...emotions].sort(() => Math.random() - 0.5);
+            
+            shuffledEmotions.forEach(emotion => {
+                const wordElement = document.createElement('div');
+                wordElement.className = 'emotion-word';
+                wordElement.textContent = emotion;
+                wordElement.onclick = () => toggleEmotion(wordElement, emotion);
+                wordCloud.appendChild(wordElement);
+            });
+        }
+
+        function toggleEmotion(element, emotion) {
+            element.classList.toggle('selected');
+            
+            if (element.classList.contains('selected')) {
+                selectedEmotions.push(emotion);
+            } else {
+                selectedEmotions = selectedEmotions.filter(e => e !== emotion);
+            }
+            
+            // Enable proceed button if at least one emotion is selected
+            const proceedBtn = document.getElementById('proceed-btn');
+            proceedBtn.disabled = selectedEmotions.length === 0;
+        }
+
+        function proceedToEmail() {
+            if (selectedEmotions.length > 0) {
+                showScreen(3);
+            }
+        }
+
+        function goBack() {
+            showScreen(2);
+        }
+
+        // Screen 3: Submit data to Google Sheets
+        async function submitData(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const submitBtn = document.getElementById('submit-btn');
+            const statusText = document.getElementById('submit-status');
+            
+            // Disable form during submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            statusText.textContent = 'Processing your data...';
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 20;
+                updateProgress(progress);
+                if (progress >= 80) clearInterval(progressInterval);
+            }, 200);
+
+            const formData = {
+                email: email,
+                emotions: selectedEmotions,
+                song: currentSong,
+                sessionId: sessionId,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Replace 'YOUR_SCRIPT_ID_HERE' with your actual Google Apps Script ID
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'no-cors', // Required for Google Apps Script
+                    body: JSON.stringify(formData)
+                });
+
+                // Note: With no-cors mode, we can't read the response
+                // but if no error is thrown, the request likely succeeded
+                updateProgress(100);
+                statusText.textContent = 'Data submitted successfully!';
+                
+                setTimeout(() => {
+                    showScreen(4);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                statusText.textContent = 'Submission failed. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+                updateProgress(0);
+                
+                // For demo purposes, still proceed to thank you screen
+                setTimeout(() => {
+                    showScreen(4);
+                }, 2000);
+            }
+        }
+
+        // Screen 4: Reset application
+        function resetApp() {
+            selectedEmotions = [];
+            currentSong = '';
+            sessionId = 'session_' + Date.now();
+            
+            // Reset form
+            document.getElementById('email').value = '';
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').textContent = 'Submit';
+            document.getElementById('submit-status').textContent = 'Ready to submit';
+            document.getElementById('proceed-btn').disabled = true;
+            
+            // Reset progress
+            updateProgress(0);
+            
+            // Reset word cloud
+            generateWordCloud();
+            
+            // Go to first screen
+            showScreen(1);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

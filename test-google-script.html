@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Google Apps Script Connection</title>
+</head>
+<body>
+    <h2>Test Form for Google Apps Script</h2>
+    
+    <form id="testForm">
+        <label>Email:</label>
+        <input type="email" id="email" value="test@example.com"><br><br>
+        
+        <label>Emotions (comma-separated):</label>
+        <input type="text" id="emotions" value="happy, calm, focused"><br><br>
+        
+        <label>Song:</label>
+        <input type="text" id="song" value="song_01.mp3"><br><br>
+        
+        <button type="submit">Submit to Google Sheets</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL GOOGLE APPS SCRIPT URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHk_HDmplJMlMtn1RLgJc9dkacmMOPGQQ3blMO91ldUVYpQYqD-Zf54cXeXC8cNsOl/exec';
+        
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Submitting...';
+            
+            // Collect form data
+            const formData = {
+                email: document.getElementById('email').value,
+                emotions: document.getElementById('emotions').value.split(',').map(e => e.trim()),
+                song: document.getElementById('song').value,
+                sessionId: 'test_' + Date.now(),
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                // THE KEY: Use text/plain content-type to avoid CORS preflight
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.text();
+                console.log('Raw response:', result);
+                
+                // Try to parse as JSON (Google Apps Script should return JSON)
+                try {
+                    const jsonResult = JSON.parse(result);
+                    resultDiv.innerHTML = `
+                        <h3 style="color: green;">✅ Success!</h3>
+                        <p>Data submitted successfully. Check your Google Sheet.</p>
+                        <pre>${JSON.stringify(jsonResult, null, 2)}</pre>
+                    `;
+                } catch {
+                    // If not JSON, just show the raw response
+                    resultDiv.innerHTML = `
+                        <h3 style="color: green;">✅ Response received</h3>
+                        <p>Raw response: ${result}</p>
+                        <p>Check your Google Sheet to see if data was added.</p>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <h3 style="color: red;">❌ Error</h3>
+                    <p>${error.message}</p>
+                    <p>Check the console for more details.</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
